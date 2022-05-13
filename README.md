@@ -7,7 +7,7 @@
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
 
-[![Contributors][contributors-shield]][contributors-url] 
+[![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
@@ -18,7 +18,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/vanotis720/mwimbo">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="src/assets/images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Mwimbo</h3>
@@ -36,7 +36,6 @@
     <a href="https://github.com/vanotis720/mwimbo/issues">Request Feature</a>
   </p>
 </div>
-
 
 # Getting Started
 
@@ -79,24 +78,19 @@ Please make sure to update tests as appropriate.
 
 [MIT](https://choosealicense.com/licenses/mit/)
 
-
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
 [contributors-shield]: https://img.shields.io/github/contributors/vanotis720/mwimbo?style=for-the-badge
 [contributors-url]: https://github.com/vanotis720/mwimbo/graphs/contributors
-
-[forks-shield]: 	https://img.shields.io/github/forks/vanotis720/mwimbo?style=for-the-badge
+[forks-shield]: https://img.shields.io/github/forks/vanotis720/mwimbo?style=for-the-badge
 [forks-url]: https://github.com/vanotis720/mwimbo/network/members
-
 [stars-shield]: https://img.shields.io/github/stars/vanotis720/mwimbo?style=for-the-badge
 [stars-url]: https://github.com/vanotis720/mwimbo/stargazers
-
 [issues-shield]: https://img.shields.io/github/issues/vanotis720/mwimbo?style=for-the-badge
 [issues-url]: https://github.com/vanotis720/mwimbo/issues
-
 [license-shield]: https://img.shields.io/github/license/vanotis720/mwimbo?style=for-the-badge
 [license-url]: https://github.com/vanotis720/mwimbo/LICENSE.md
-
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/vanotis720
 [product-screenshot]: images/screenshot.png
