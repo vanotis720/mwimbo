@@ -6,7 +6,7 @@ import Slider from '@react-native-community/slider';
 import Colors from '../../utilities/Color';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import TrackPlayer, { State, Event, useProgress, usePlaybackState, useTrackPlayerEvents } from 'react-native-track-player';
+import TrackPlayer, { State, Event, useProgress, usePlaybackState, useTrackPlayerEvents, Capability } from 'react-native-track-player';
 
 var tracks = [{
 	id: '1',
@@ -26,12 +26,64 @@ var tracks = [{
 	duration: 140,
 }];
 
+const initializePlayer = async () => {
+	try {
+		await TrackPlayer.setupPlayer();
 
+		await TrackPlayer.updateOptions({
+			stopWithApp: false, // false=> music continues in background even when app is closed
+
+			capabilities: [
+				Capability.Play,
+				Capability.Pause,
+				Capability.SkipToNext,
+				Capability.SkipToPrevious,
+				Capability.Stop,
+				Capability.SeekTo,
+			],
+
+			// Capabilities that will show up when the notification is in the compact form on Android
+			compactCapabilities: [Capability.Play, Capability.Pause, Capability.Stop],
+		});
+	} catch (e) {
+		console.log(e);
+		// to-do handle error
+	}
+};
+
+const playlistTrack = async () => {
+	await TrackPlayer.add(tracks);
+	console.log('added');
+
+};
+
+const prevTack = async () => {
+	try {
+		await TrackPlayer.skipToPrevious();
+	} catch (error) {
+		// to-do handle error
+	}
+};
+
+const nextTack = async () => {
+	try {
+		await TrackPlayer.skipToNext();
+	} catch (error) {
+		// to-do handle error
+	}
+};
+
+const skipTo = async (time) => {
+	await TrackPlayer.seekTo(time);
+};
+
+const onSliderValueChange = async (value) => {
+	await TrackPlayer.seekTo(value);
+};
 
 export default function PlayerScreen() {
 	const [isPlaying, setPlaying] = useState(false);
 	const playOrPauseIcon = isPlaying ? 'pause' : 'play-circle';
-	const artImg = require('../../assets/images/library-cover.jpeg');
 	const progress = useProgress();
 	const playbackState = usePlaybackState();
 	const [trackTitle, setTrackTitle] = useState();
@@ -55,21 +107,6 @@ export default function PlayerScreen() {
 		playlistTrack();
 	}, []);
 
-	const initializePlayer = async () => {
-		try {
-			await TrackPlayer.setupPlayer();
-		} catch (e) {
-			console.log(e);
-			// to-do handle error
-		}
-	};
-
-	const playlistTrack = async () => {
-		await TrackPlayer.add(tracks);
-		console.log('added');
-
-	};
-
 	const playTrack = async (playbackState) => {
 		const currentTrack = await TrackPlayer.getCurrentTrack();
 
@@ -85,29 +122,6 @@ export default function PlayerScreen() {
 		}
 	};
 
-	const prevTack = async () => {
-		try {
-			await TrackPlayer.skipToPrevious();
-		} catch (error) {
-			// to-do handle error
-		}
-	};
-
-	const nextTack = async () => {
-		try {
-			await TrackPlayer.skipToNext();
-		} catch (error) {
-			// to-do handle error
-		}
-	};
-
-	const skipTo = async (time) => {
-		await TrackPlayer.seekTo(time);
-	};
-
-	const onSliderValueChange = async (value) => {
-		await TrackPlayer.seekTo(value);
-	};
 
 	return (
 		<View style={styles.container}>
@@ -115,6 +129,7 @@ export default function PlayerScreen() {
 				<Image source={trackArtwotk} style={styles.logo} />
 				<Text style={styles.title}>{trackTitle}</Text>
 				<Text style={styles.author}>{trackArtist}</Text>
+				{/* <MaterialIcons name="favorite-outline" size={35} color={Colors.WHITE} /> */}
 			</View>
 			<View style={styles.sliderContainer}>
 				<Text style={styles.time}>
@@ -208,7 +223,7 @@ const styles = StyleSheet.create({
 		width: '75%',
 		height: '75%',
 		resizeMode: 'contain',
-		borderColor: Colors.SECONDARY,
+		borderColor: Colors.PRINCIPAL,
 		borderWidth: 1,
 		borderRadius: 15,
 		marginTop: 20,
