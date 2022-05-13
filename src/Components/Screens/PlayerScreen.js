@@ -129,7 +129,7 @@ export default function PlayerScreen() {
 				<Image source={trackArtwotk} style={styles.logo} />
 				<Text style={styles.title}>{trackTitle}</Text>
 				<Text style={styles.author}>{trackArtist}</Text>
-				{/* <MaterialIcons name="favorite-outline" size={35} color={Colors.WHITE} /> */}
+				<MaterialIcons name="favorite-outline" size={35} color={Colors.WHITE} />
 			</View>
 			<View style={styles.sliderContainer}>
 				<Text style={styles.time}>
