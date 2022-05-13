@@ -6,27 +6,25 @@ import Slider from '@react-native-community/slider';
 import Colors from '../../utilities/Color';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import TrackPlayer, { State, Event, useProgress } from 'react-native-track-player';
+import TrackPlayer, { State, Event, useProgress, usePlaybackState, useTrackPlayerEvents } from 'react-native-track-player';
 
-var track = {
+var tracks = [{
 	id: '1',
 	url: 'file:///storage/emulated/0/Download/mood_mp3_26655.mp3',
 	title: 'Keys of moon',
 	artist: 'The Epic Hero',
-	artwork: 'https://picsum.photos/id/1003/200/300',
+	artwork: require('../../assets/images/logo.png'),
 	album: '',
 	duration: 149,
-};
-
-const track2 = {
+}, {
 	id: '2',
 	url: 'file:///storage/emulated/0/Download/alan_walker_alone_mp3_46103.mp3',
 	title: 'Equinox',
 	artist: 'Purple Cat',
-	artwork: 'https://picsum.photos/id/1016/200/300',
+	artwork: require('../../assets/images/library-cover.jpeg'),
 	album: '',
 	duration: 140,
-};
+}];
 
 
 
@@ -35,6 +33,21 @@ export default function PlayerScreen() {
 	const playOrPauseIcon = isPlaying ? 'pause' : 'play-circle';
 	const artImg = require('../../assets/images/library-cover.jpeg');
 	const progress = useProgress();
+	const playbackState = usePlaybackState();
+	const [trackTitle, setTrackTitle] = useState();
+	const [trackArtist, setTrackArtist] = useState();
+	const [trackArtwotk, setTrackArtwork] = useState();
+
+
+	useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
+		if (event.type === Event.PlaybackTrackChanged && event.nextTrack != null) {
+			const track = await TrackPlayer.getTrack(event.nextTrack);
+			const { title, artist, artwork } = track || {};
+			setTrackTitle(title);
+			setTrackArtist(artist);
+			setTrackArtwork(artwork);
+		}
+	});
 
 
 	useEffect(() => {
@@ -52,24 +65,23 @@ export default function PlayerScreen() {
 	};
 
 	const playlistTrack = async () => {
-		await TrackPlayer.add([track, track2]);
+		await TrackPlayer.add(tracks);
 		console.log('added');
 
 	};
 
-	const playTrack = async () => {
-		const state = await TrackPlayer.getState();
-		if (state === State.Playing) {
-			await TrackPlayer.pause();
-			setPlaying(false);
-		};
-		if (state === State.Paused) {
-			await TrackPlayer.play();
-			setPlaying(true);
-		};
-		if (state === State.Stopped) {
-			await TrackPlayer.play();
-			setPlaying(true);
+	const playTrack = async (playbackState) => {
+		const currentTrack = await TrackPlayer.getCurrentTrack();
+
+		if (currentTrack !== null) {
+			if (playbackState === State.Playing) {
+				await TrackPlayer.pause();
+				setPlaying(false);
+			};
+			if (playbackState === State.Paused) {
+				await TrackPlayer.play();
+				setPlaying(true);
+			};
 		}
 	};
 
@@ -100,23 +112,27 @@ export default function PlayerScreen() {
 	return (
 		<View style={styles.container}>
 			<View style={styles.cover}>
-				<Image source={artImg} style={styles.logo} />
-				<Text style={styles.title}>Unstable</Text>
-				<Text style={styles.author}>Mr. Kitty</Text>
+				<Image source={trackArtwotk} style={styles.logo} />
+				<Text style={styles.title}>{trackTitle}</Text>
+				<Text style={styles.author}>{trackArtist}</Text>
 			</View>
 			<View style={styles.sliderContainer}>
-				<Text style={styles.time}>00:00</Text>
+				<Text style={styles.time}>
+					{new Date(progress.position * 1000).toISOString().substr(14, 5)}
+				</Text>
 				<Slider
 					style={styles.slider}
 					minimumValue={0}
-					maximumValue={100}
+					maximumValue={progress.duration}
 					value={progress.position}
 					onSlidingComplete={(val) => onSliderValueChange(val)}
 					minimumTrackTintColor={Colors.WHITE}
 					maximumTrackTintColor={Colors.SECONDARY}
 					thumbTintColor={Colors.THIRD}
 				/>
-				<Text style={styles.time}>03:10</Text>
+				<Text style={styles.time}>
+					{new Date((progress.duration - progress.position) * 1000).toISOString().substr(14, 5)}
+				</Text>
 			</View>
 			<View style={styles.control}>
 				<View style={[styles.buttonsCol, { alignItems: 'flex-end' }]}>
@@ -130,7 +146,7 @@ export default function PlayerScreen() {
 					</TouchableOpacity>
 				</View>
 				<View style={styles.buttonsCol}>
-					<TouchableOpacity onPress={() => playTrack()} >
+					<TouchableOpacity onPress={() => playTrack(playbackState)} >
 						<MaterialCommunityIcons name={playOrPauseIcon} size={60} style={styles.playPauseIcon} />
 					</TouchableOpacity>
 				</View>
