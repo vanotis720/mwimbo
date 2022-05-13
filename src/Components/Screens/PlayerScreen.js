@@ -6,11 +6,11 @@ import Slider from '@react-native-community/slider';
 import Colors from '../../utilities/Color';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import TrackPlayer, { State } from 'react-native-track-player';
+import TrackPlayer, { State, Event, useProgress } from 'react-native-track-player';
 
 var track = {
 	id: '1',
-	url: 'https://www.chosic.com/wp-content/uploads/2021/07/The-Epic-Hero-Epic-Cinematic-Keys-of-Moon-Music.mp3',
+	url: 'file:///storage/emulated/0/Download/mood_mp3_26655.mp3',
 	title: 'Keys of moon',
 	artist: 'The Epic Hero',
 	artwork: 'https://picsum.photos/id/1003/200/300',
@@ -19,8 +19,8 @@ var track = {
 };
 
 const track2 = {
-	id: '3',
-	url: 'https://www.chosic.com/wp-content/uploads/2021/07/purrple-cat-equinox.mp3',
+	id: '2',
+	url: 'file:///storage/emulated/0/Download/alan_walker_alone_mp3_46103.mp3',
 	title: 'Equinox',
 	artist: 'Purple Cat',
 	artwork: 'https://picsum.photos/id/1016/200/300',
@@ -31,15 +31,15 @@ const track2 = {
 
 
 export default function PlayerScreen() {
-
-	const [currentTrack, setCurrentTrack] = React.useState(TrackPlayer.getCurrentTrack());
 	const [isPlaying, setPlaying] = useState(false);
+	const playOrPauseIcon = isPlaying ? 'pause' : 'play-circle';
+	const artImg = require('../../assets/images/library-cover.jpeg');
+	const progress = useProgress();
 
 
 	useEffect(() => {
 		initializePlayer();
 		playlistTrack();
-		playbackState();
 	}, []);
 
 	const initializePlayer = async () => {
@@ -51,27 +51,14 @@ export default function PlayerScreen() {
 		}
 	};
 
-	const playbackState = async () => {
-		const state = await TrackPlayer.getState();
-		if (state === State.Playing) {
-			console.log('The player is playing');
-		};
-		if (state === State.Paused) {
-			console.log('The player is paused');
-		};
-		if (state === State.Stopped) {
-			console.log('The player is stopped');
-		};
-		console.log(state);
-	};
-
 	const playlistTrack = async () => {
 		await TrackPlayer.add([track, track2]);
+		console.log('added');
+
 	};
 
 	const playTrack = async () => {
 		const state = await TrackPlayer.getState();
-
 		if (state === State.Playing) {
 			await TrackPlayer.pause();
 			setPlaying(false);
@@ -80,18 +67,40 @@ export default function PlayerScreen() {
 			await TrackPlayer.play();
 			setPlaying(true);
 		};
-		console.log('====================================');
-		console.log(state);
-		console.log('====================================');
+		if (state === State.Stopped) {
+			await TrackPlayer.play();
+			setPlaying(true);
+		}
 	};
 
-	const playOrPauseIcon = isPlaying ? 'pause' : 'play-circle';
+	const prevTack = async () => {
+		try {
+			await TrackPlayer.skipToPrevious();
+		} catch (error) {
+			// to-do handle error
+		}
+	};
 
+	const nextTack = async () => {
+		try {
+			await TrackPlayer.skipToNext();
+		} catch (error) {
+			// to-do handle error
+		}
+	};
+
+	const skipTo = async (time) => {
+		await TrackPlayer.seekTo(time);
+	};
+
+	const onSliderValueChange = async (value) => {
+		await TrackPlayer.seekTo(value);
+	};
 
 	return (
 		<View style={styles.container}>
 			<View style={styles.cover}>
-				<Image source={require('../../assets/images/library-cover.jpeg')} style={styles.logo} />
+				<Image source={artImg} style={styles.logo} />
 				<Text style={styles.title}>Unstable</Text>
 				<Text style={styles.author}>Mr. Kitty</Text>
 			</View>
@@ -100,7 +109,9 @@ export default function PlayerScreen() {
 				<Slider
 					style={styles.slider}
 					minimumValue={0}
-					maximumValue={1}
+					maximumValue={100}
+					value={progress.position}
+					onSlidingComplete={(val) => onSliderValueChange(val)}
 					minimumTrackTintColor={Colors.WHITE}
 					maximumTrackTintColor={Colors.SECONDARY}
 					thumbTintColor={Colors.THIRD}
@@ -109,12 +120,12 @@ export default function PlayerScreen() {
 			</View>
 			<View style={styles.control}>
 				<View style={[styles.buttonsCol, { alignItems: 'flex-end' }]}>
-					<TouchableOpacity onPress={() => alert('skip-previous')}>
+					<TouchableOpacity onPress={() => prevTack()}>
 						<MaterialCommunityIcons name="skip-previous" size={30} color={Colors.WHITE} />
 					</TouchableOpacity>
 				</View>
 				<View style={[styles.buttonsCol, { alignItems: 'flex-end' }]}>
-					<TouchableOpacity onPress={() => alert('replay-10')}>
+					<TouchableOpacity onPress={() => skipTo(progress.position - 10)}>
 						<MaterialIcons name="replay-10" size={35} color={Colors.WHITE} />
 					</TouchableOpacity>
 				</View>
@@ -124,12 +135,12 @@ export default function PlayerScreen() {
 					</TouchableOpacity>
 				</View>
 				<View style={[styles.buttonsCol, { alignItems: 'flex-start' }]}>
-					<TouchableOpacity onPress={() => alert('forward-10')}>
+					<TouchableOpacity onPress={() => skipTo(progress.position + 10)}>
 						<MaterialIcons name="forward-10" size={35} color={Colors.WHITE} />
 					</TouchableOpacity>
 				</View>
 				<View style={[styles.buttonsCol, { alignItems: 'flex-start' }]}>
-					<TouchableOpacity onPress={() => alert('skip-next')}>
+					<TouchableOpacity onPress={() => nextTack()}>
 						<MaterialCommunityIcons name="skip-next" size={30} color={Colors.WHITE} />
 					</TouchableOpacity>
 				</View>
