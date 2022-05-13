@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
+
 import { Text, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Slider from '@react-native-community/slider';
 import Colors from '../../utilities/Color';
@@ -7,36 +8,85 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import TrackPlayer, { State } from 'react-native-track-player';
 
-await TrackPlayer.setupPlayer()
-// The player is ready to be used
+var track = {
+	id: '1',
+	url: 'https://www.chosic.com/wp-content/uploads/2021/07/The-Epic-Hero-Epic-Cinematic-Keys-of-Moon-Music.mp3',
+	title: 'Keys of moon',
+	artist: 'The Epic Hero',
+	artwork: 'https://picsum.photos/id/1003/200/300',
+	album: '',
+	duration: 149,
+};
+
+const track2 = {
+	id: '3',
+	url: 'https://www.chosic.com/wp-content/uploads/2021/07/purrple-cat-equinox.mp3',
+	title: 'Equinox',
+	artist: 'Purple Cat',
+	artwork: 'https://picsum.photos/id/1016/200/300',
+	album: '',
+	duration: 140,
+};
+
+
 
 export default function PlayerScreen() {
-	const state = await TrackPlayer.getState();
-	if (state === State.Playing) {
-		console.log('The player is playing');
-	};
-	var track = {
-		url: 'http://example.com/avaritia.mp3', // Load media from the network
-		title: 'Avaritia',
-		artist: 'deadmau5',
-		album: 'while(1<2)',
-		genre: 'Progressive House, Electro House',
-		date: '2014-05-20T07:00:00+00:00', // RFC 3339
-		artwork: 'http://example.com/cover.png', // Load artwork from the network
-		duration: 402 // Duration in seconds
-	};
 
-	const track2 = {
-		url: require('./coelacanth.ogg'), // Load media from the app bundle
-		title: 'Coelacanth I',
-		artist: 'deadmau5',
-		artwork: require('./cover.jpg'), // Load artwork from the app bundle
-		duration: 166
-	};
+	const [currentTrack, setCurrentTrack] = React.useState(TrackPlayer.getCurrentTrack());
+	const [isPlaying, setPlaying] = useState(false);
 
 
-	// You can then [add](https://react-native-track-player.js.org/docs/api/functions/queue#addtracks-insertbeforeindex) the items to the queue
-	await TrackPlayer.add([track, track2]);
+	useEffect(() => {
+		initializePlayer();
+		playlistTrack();
+		playbackState();
+	}, []);
+
+	const initializePlayer = async () => {
+		try {
+			await TrackPlayer.setupPlayer();
+		} catch (e) {
+			console.log(e);
+			// to-do handle error
+		}
+	};
+
+	const playbackState = async () => {
+		const state = await TrackPlayer.getState();
+		if (state === State.Playing) {
+			console.log('The player is playing');
+		};
+		if (state === State.Paused) {
+			console.log('The player is paused');
+		};
+		if (state === State.Stopped) {
+			console.log('The player is stopped');
+		};
+		console.log(state);
+	};
+
+	const playlistTrack = async () => {
+		await TrackPlayer.add([track, track2]);
+	};
+
+	const playTrack = async () => {
+		const state = await TrackPlayer.getState();
+
+		if (state === State.Playing) {
+			await TrackPlayer.pause();
+			setPlaying(false);
+		};
+		if (state === State.Paused) {
+			await TrackPlayer.play();
+			setPlaying(true);
+		};
+		console.log('====================================');
+		console.log(state);
+		console.log('====================================');
+	};
+
+	const playOrPauseIcon = isPlaying ? 'pause' : 'play-circle';
+
 
 	return (
 		<View style={styles.container}>
@@ -69,8 +119,8 @@ export default function PlayerScreen() {
 					</TouchableOpacity>
 				</View>
 				<View style={styles.buttonsCol}>
-					<TouchableOpacity onPress={() => alert('play-pause')} >
-						<MaterialCommunityIcons name="play-circle" size={60} style={styles.playPauseIcon} />
+					<TouchableOpacity onPress={() => playTrack()} >
+						<MaterialCommunityIcons name={playOrPauseIcon} size={60} style={styles.playPauseIcon} />
 					</TouchableOpacity>
 				</View>
 				<View style={[styles.buttonsCol, { alignItems: 'flex-start' }]}>
