@@ -5,8 +5,39 @@ import Slider from '@react-native-community/slider';
 import Colors from '../../utilities/Color';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import TrackPlayer, { State } from 'react-native-track-player';
+
+await TrackPlayer.setupPlayer()
+// The player is ready to be used
 
 export default function PlayerScreen() {
+	const state = await TrackPlayer.getState();
+	if (state === State.Playing) {
+		console.log('The player is playing');
+	};
+	var track = {
+		url: 'http://example.com/avaritia.mp3', // Load media from the network
+		title: 'Avaritia',
+		artist: 'deadmau5',
+		album: 'while(1<2)',
+		genre: 'Progressive House, Electro House',
+		date: '2014-05-20T07:00:00+00:00', // RFC 3339
+		artwork: 'http://example.com/cover.png', // Load artwork from the network
+		duration: 402 // Duration in seconds
+	};
+
+	const track2 = {
+		url: require('./coelacanth.ogg'), // Load media from the app bundle
+		title: 'Coelacanth I',
+		artist: 'deadmau5',
+		artwork: require('./cover.jpg'), // Load artwork from the app bundle
+		duration: 166
+	};
+
+
+	// You can then [add](https://react-native-track-player.js.org/docs/api/functions/queue#addtracks-insertbeforeindex) the items to the queue
+	await TrackPlayer.add([track, track2]);
+
 	return (
 		<View style={styles.container}>
 			<View style={styles.cover}>
