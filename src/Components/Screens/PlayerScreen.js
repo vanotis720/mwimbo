@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react';
-
 import { Text, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Slider from '@react-native-community/slider';
 import Colors from '../../utilities/Color';
@@ -51,12 +50,6 @@ const initializePlayer = async () => {
 	}
 };
 
-const playlistTrack = async () => {
-	await TrackPlayer.add(tracks);
-	console.log('added');
-
-};
-
 const prevTack = async () => {
 	try {
 		await TrackPlayer.skipToPrevious();
@@ -83,13 +76,13 @@ const onSliderValueChange = async (value) => {
 
 export default function PlayerScreen() {
 	const [isPlaying, setPlaying] = useState(false);
-	const playOrPauseIcon = isPlaying ? 'pause' : 'play-circle';
-	const progress = useProgress();
-	const playbackState = usePlaybackState();
 	const [trackTitle, setTrackTitle] = useState();
 	const [trackArtist, setTrackArtist] = useState();
 	const [trackArtwotk, setTrackArtwork] = useState();
 
+	const playbackState = usePlaybackState();
+	const progress = useProgress();
+	const playOrPauseIcon = isPlaying ? 'pause' : 'play-circle';
 
 	useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
 		if (event.type === Event.PlaybackTrackChanged && event.nextTrack != null) {
@@ -109,7 +102,6 @@ export default function PlayerScreen() {
 
 	const playTrack = async (playbackState) => {
 		const currentTrack = await TrackPlayer.getCurrentTrack();
-
 		if (currentTrack !== null) {
 			if (playbackState === State.Playing) {
 				await TrackPlayer.pause();
@@ -122,11 +114,21 @@ export default function PlayerScreen() {
 		}
 	};
 
+	const playlistTrack = async () => {
+		try {
+			await TrackPlayer.add(tracks);
+			console.log('added' + tracks);
+		} catch (error) {
+			console.log(error);
+		}
+
+	};
+
 
 	return (
 		<View style={styles.container}>
 			<View style={styles.cover}>
-				<Image source={trackArtwotk} style={styles.logo} />
+				<Image source={trackArtwotk} style={styles.artwotk} />
 				<Text style={styles.title}>{trackTitle}</Text>
 				<Text style={styles.author}>{trackArtist}</Text>
 				<MaterialIcons name="favorite-outline" size={35} color={Colors.WHITE} />
@@ -143,34 +145,34 @@ export default function PlayerScreen() {
 					onSlidingComplete={(val) => onSliderValueChange(val)}
 					minimumTrackTintColor={Colors.WHITE}
 					maximumTrackTintColor={Colors.SECONDARY}
-					thumbTintColor={Colors.THIRD}
+					thumbTintColor={Colors.WHITE}
 				/>
 				<Text style={styles.time}>
 					{new Date((progress.duration - progress.position) * 1000).toISOString().substr(14, 5)}
 				</Text>
 			</View>
 			<View style={styles.control}>
-				<View style={[styles.buttonsCol, { alignItems: 'flex-end' }]}>
+				<View style={[styles.buttonsCol]}>
 					<TouchableOpacity onPress={() => prevTack()}>
 						<MaterialCommunityIcons name="skip-previous" size={30} color={Colors.WHITE} />
 					</TouchableOpacity>
 				</View>
-				<View style={[styles.buttonsCol, { alignItems: 'flex-end' }]}>
+				<View style={[styles.buttonsCol]}>
 					<TouchableOpacity onPress={() => skipTo(progress.position - 10)}>
 						<MaterialIcons name="replay-10" size={35} color={Colors.WHITE} />
 					</TouchableOpacity>
 				</View>
-				<View style={styles.buttonsCol}>
+				<View style={styles.buttonsCol, { marginBottom: 12 }}>
 					<TouchableOpacity onPress={() => playTrack(playbackState)} >
 						<MaterialCommunityIcons name={playOrPauseIcon} size={60} style={styles.playPauseIcon} />
 					</TouchableOpacity>
 				</View>
-				<View style={[styles.buttonsCol, { alignItems: 'flex-start' }]}>
+				<View style={[styles.buttonsCol]}>
 					<TouchableOpacity onPress={() => skipTo(progress.position + 10)}>
 						<MaterialIcons name="forward-10" size={35} color={Colors.WHITE} />
 					</TouchableOpacity>
 				</View>
-				<View style={[styles.buttonsCol, { alignItems: 'flex-start' }]}>
+				<View style={[styles.buttonsCol]}>
 					<TouchableOpacity onPress={() => nextTack()}>
 						<MaterialCommunityIcons name="skip-next" size={30} color={Colors.WHITE} />
 					</TouchableOpacity>
@@ -189,6 +191,7 @@ const styles = StyleSheet.create({
 		flex: 4,
 		justifyContent: 'center',
 		alignItems: 'center',
+		marginTop: 30
 	},
 	title: {
 		fontSize: 25,
@@ -219,14 +222,14 @@ const styles = StyleSheet.create({
 		flex: 1,
 		flexDirection: 'row',
 	},
-	logo: {
+	artwotk: {
 		width: '75%',
 		height: '75%',
 		resizeMode: 'contain',
 		borderColor: Colors.PRINCIPAL,
 		borderWidth: 1,
 		borderRadius: 15,
-		marginTop: 20,
+		marginTop: 30
 	},
 	buttonsCol: {
 		flex: 1,

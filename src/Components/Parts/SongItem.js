@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import * as React from 'react';
 import { Text, View, StyleSheet, StatusBar, TouchableOpacity } from 'react-native';
-import { millisToMinutesAndSeconds } from '../../helpers/cast';
+import { formatDuration } from '../../helpers/cast';
 import Colors from '../../utilities/Color';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -18,7 +18,7 @@ export default function SongItem({ item }) {
             <View style={styles.infos}>
                 <Text style={styles.title}>{item.title}</Text>
                 <Text style={styles.author}>
-                    {item.artist} - <Text style={styles.duration}>{millisToMinutesAndSeconds(item.duration)}</Text>
+                    {item.artist ? item.artist + '-' : ''} <Text style={styles.duration}>{formatDuration(item.duration)}</Text>
                 </Text>
             </View>
             <View style={styles.icon}>

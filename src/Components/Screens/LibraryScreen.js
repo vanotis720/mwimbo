@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import * as React from 'react';
-import { Text, View, Image, FlatList, StyleSheet, StatusBar, DeviceEventEmitter } from 'react-native';
+import { Text, View, Image, FlatList, StyleSheet, DeviceEventEmitter } from 'react-native';
 import MusicFiles from 'react-native-get-music-files';
 import Colors from '../../utilities/Color';
 import SongItem from '../Parts/SongItem';
