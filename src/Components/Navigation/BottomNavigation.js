@@ -5,9 +5,9 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import PlayerScreen from '../Screens/PlayerScreen';
-import LibraryScreen from '../Screens/LibraryScreen';
 import LikeScreen from '../Screens/LikeScreen';
 import Colors from '../../utilities/Color';
+import StackLibraryNavigation from './StackLibraryNavigation';
 
 
 const Tab = createBottomTabNavigator();
@@ -15,7 +15,7 @@ const Tab = createBottomTabNavigator();
 export default function BottomNavigation() {
     return (
         <Tab.Navigator
-            initialRouteName="Home"
+            initialRouteName="Library"
             screenOptions={{
                 tabBarActiveTintColor: Colors.WHITE,
                 tabBarInactiveTintColor: Colors.SECONDARY,
@@ -42,7 +42,7 @@ export default function BottomNavigation() {
                     ),
                 }}
             />
-            <Tab.Screen name="Library" component={LibraryScreen}
+            <Tab.Screen name="Library" component={StackLibraryNavigation}
                 options={{
                     headerShown: false,
                     headerShadowVisible: false,

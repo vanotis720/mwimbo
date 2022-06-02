@@ -30,15 +30,13 @@ const initializePlayer = async () => {
 		await TrackPlayer.setupPlayer();
 
 		await TrackPlayer.updateOptions({
-			stopWithApp: false, // false=> music continues in background even when app is closed
+			stopWithApp: true, // false=> music continues in background even when app is closed
 
 			capabilities: [
 				Capability.Play,
 				Capability.Pause,
 				Capability.SkipToNext,
 				Capability.SkipToPrevious,
-				Capability.Stop,
-				Capability.SeekTo,
 			],
 
 			// Capabilities that will show up when the notification is in the compact form on Android
@@ -74,7 +72,8 @@ const onSliderValueChange = async (value) => {
 	await TrackPlayer.seekTo(value);
 };
 
-export default function PlayerScreen() {
+export default function PlayerScreen({ route, navigation }) {
+	const track = route.params;
 	const [isPlaying, setPlaying] = useState(false);
 	const [trackTitle, setTrackTitle] = useState();
 	const [trackArtist, setTrackArtist] = useState();
@@ -116,8 +115,30 @@ export default function PlayerScreen() {
 
 	const playlistTrack = async () => {
 		try {
-			await TrackPlayer.add(tracks);
-			console.log('added' + tracks);
+			const currentTrack = await TrackPlayer.getCurrentTrack();
+
+			if (route.params !== undefined) {
+
+				await TrackPlayer.add([
+					{
+						id: track.id,
+						url: track.path,
+						title: track.title,
+						artist: track.artist,
+						artwork: track.artwork || require('../../assets/images/library-cover.jpeg'),
+						album: track.album,
+						duration: track.duration,
+					},
+				]);
+
+				await TrackPlayer.play();
+				setPlaying(true);
+
+			}
+			else if (currentTrack == null && route.params === undefined && playbackState === State.Stopped) {
+				await TrackPlayer.add(tracks);
+				console.log('added' + tracks);
+			}
 		} catch (error) {
 			console.log(error);
 		}

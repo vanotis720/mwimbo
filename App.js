@@ -1,9 +1,11 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { Button, PermissionsAndroid, SafeAreaView, StatusBar, StyleSheet, Text, View } from "react-native";
-
+import { PermissionsAndroid } from "react-native";
 import BottomNavigation from './src/Components/Navigation/BottomNavigation';
+import { connect } from 'react-redux';
+import { changePlayBack } from './src/actions/changePlayBack';
+import { bindActionCreators } from 'redux';
 
 const requestStoragePermission = async () => {
 	try {
@@ -26,10 +28,11 @@ const requestStoragePermission = async () => {
 	}
 };
 
-export default function App() {
+function App(props) {
 
 	useEffect(() => {
 		requestStoragePermission();
+		let { playback, actions } = props;
 	}, []);
 
 	return (
@@ -38,3 +41,18 @@ export default function App() {
 		</NavigationContainer>
 	);
 }
+
+const mapStateToProps = state => ({
+	playback: state.playback,
+});
+
+const ActionCreators = Object.assign(
+	{},
+	changePlayBack,
+);
+
+const mapDispatchToProps = dispatch => ({
+	actions: bindActionCreators(ActionCreators, dispatch),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)

@@ -4,21 +4,22 @@ import { Text, View, StyleSheet, StatusBar, TouchableOpacity } from 'react-nativ
 import { formatDuration } from '../../helpers/cast';
 import Colors from '../../utilities/Color';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import PlayerScreen from '../Screens/PlayerScreen';
 
 
-export default function SongItem({ item }) {
-    console.log('item', item);
+export default function SongItem({ navigation, track }) {
+    console.log('item', track);
     return (
         <TouchableOpacity
             style={styles.item}
             onPress={() => {
-                console.log('item tapped');
+                navigation.navigate('Home', track)
             }}
         >
             <View style={styles.infos}>
-                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.title}>{track.title}</Text>
                 <Text style={styles.author}>
-                    {item.artist ? item.artist + '-' : ''} <Text style={styles.duration}>{formatDuration(item.duration)}</Text>
+                    {track.artist ? track.artist + '-' : ''} <Text style={styles.duration}>{formatDuration(track.duration)}</Text>
                 </Text>
             </View>
             <View style={styles.icon}>

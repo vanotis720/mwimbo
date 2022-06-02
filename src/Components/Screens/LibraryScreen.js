@@ -62,7 +62,7 @@ export default class LibraryScreen extends React.Component {
 				<View style={styles.playlist}>
 					<FlatList
 						data={this.state.songs}
-						renderItem={({ item }) => <SongItem item={item} />}
+						renderItem={({ item }) => <SongItem track={item} navigation={this.props.navigation} />}
 						keyExtractor={item => item.id}
 					/>
 				</View>
