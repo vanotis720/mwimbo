@@ -4,11 +4,21 @@ import { Text, View, Image, FlatList, StyleSheet, DeviceEventEmitter } from 'rea
 import MusicFiles from 'react-native-get-music-files';
 import Colors from '../../utilities/Color';
 import SongItem from '../Parts/SongItem';
+import { connect } from 'react-redux';
+import { changePlayBack } from '../../actions/changePlayBack';
+import { bindActionCreators } from 'redux';
 
 
-export default class LibraryScreen extends React.Component {
+class LibraryScreen extends React.Component {
 	constructor(props) {
 		super(props);
+		let { playback, actions } = props;
+
+		console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+		console.log(playback);
+		console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+
+
 		this.state = {
 			songs: [],
 		};
@@ -112,3 +122,18 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 	},
 });
+
+const mapStateToProps = state => ({
+	playback: state.playback,
+});
+
+const ActionCreators = Object.assign(
+	{},
+	changePlayBack,
+);
+
+const mapDispatchToProps = dispatch => ({
+	actions: bindActionCreators(ActionCreators, dispatch),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(LibraryScreen)
