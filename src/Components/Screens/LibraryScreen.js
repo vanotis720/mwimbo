@@ -18,7 +18,6 @@ class LibraryScreen extends React.Component {
 		console.log(playback);
 		console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
 
-
 		this.state = {
 			songs: [],
 		};
@@ -76,6 +75,12 @@ class LibraryScreen extends React.Component {
 						keyExtractor={item => item.id}
 					/>
 				</View>
+				{(this.playback) ?
+					<View style={styles.header}>
+						<Image source={require('../../assets/images/library-cover.jpeg')} style={styles.logo} />
+						<Text style={styles.title}>Bibliothèque</Text>
+					</View> : null
+				}
 			</View>
 		);
 	};
